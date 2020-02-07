@@ -1,0 +1,10 @@
+.root {
+}
+
+.button {
+    -fx-pref-width: 80px;
+}
+
+.combo-box {
+    -fx-pref-width: 130px;
+}
