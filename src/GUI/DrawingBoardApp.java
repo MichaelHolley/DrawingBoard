@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -12,11 +13,14 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Affine;
+import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 
 public class DrawingBoardApp extends Application {
 
     private final int mouseOffset = 60;
+    private Point2D lastErasePoint;
 
     private Stage window;
     private Canvas canvas;
@@ -106,8 +110,8 @@ public class DrawingBoardApp extends Application {
                 gc.lineTo(mouseEvent.getSceneX(), mouseEvent.getSceneY() - mouseOffset);
                 gc.stroke();
             } else if (!drawButton.isSelected() && eraseButton.isSelected()) {
-                double currentSize = sizeSlider.getValue();
-                gc.clearRect(mouseEvent.getSceneX() - currentSize / 2, mouseEvent.getSceneY() - currentSize / 2 - mouseOffset, currentSize, currentSize);
+                lastErasePoint = new Point2D(
+                        mouseEvent.getSceneX(), mouseEvent.getSceneY() - mouseOffset);
             }
         });
 
@@ -116,8 +120,24 @@ public class DrawingBoardApp extends Application {
                 gc.lineTo(mouseEvent.getSceneX(), mouseEvent.getSceneY() - mouseOffset);
                 gc.stroke();
             } else if (!drawButton.isSelected() && eraseButton.isSelected()) {
-                double currentSize = sizeSlider.getValue();
-                gc.clearRect(mouseEvent.getSceneX() - currentSize / 2, mouseEvent.getSceneY() - currentSize / 2 - mouseOffset, currentSize, currentSize);
+                Point2D location = new Point2D(
+                        mouseEvent.getSceneX(), mouseEvent.getSceneY() - mouseOffset);
+
+                Point2D diff = location.subtract(lastErasePoint);
+                double angle = Math.toDegrees(
+                        Math.atan2(diff.getY(), diff.getX()));
+                double width = gc.getLineWidth();
+
+                gc.save();
+                gc.setTransform(new Affine(new Rotate(
+                        angle, lastErasePoint.getX(), lastErasePoint.getY())));
+                gc.clearRect(
+                        lastErasePoint.getX() - width / 2,
+                        lastErasePoint.getY() - width / 2,
+                        lastErasePoint.distance(location) + width, width);
+                gc.restore();
+
+                lastErasePoint = location;
             }
         });
 
@@ -125,7 +145,7 @@ public class DrawingBoardApp extends Application {
 
 
         Scene scene = new Scene(layout, 800, 800);
-        //scene.getStylesheets().add("GUI/OptionsStyling.css");
+        scene.getStylesheets().add("GUI/OptionsStyling.css");
         window.setScene(scene);
         window.show();
     }
