@@ -10,7 +10,5 @@ Go and check out the JavaFX-Library [here](https://openjfx.io/, "JavaFX"). Since
 - Buttons to Fill and Clear the whole canvas
 
 ## Future possible features
-- Improve Drawing-mechanism
-- Improve Eraser-Tool
 - Line "Anti-Aliasing"
 - Save the image/canvas
