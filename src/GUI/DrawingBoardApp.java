@@ -59,17 +59,15 @@ public class DrawingBoardApp extends Application {
         sizeSlider.setValue(18);
         optionPane.getChildren().add(sizeSlider);
 
-        TextField sizeSliderTF = new TextField();
-        sizeSliderTF.setEditable(false);
-        sizeSliderTF.setText(String.format("%.0f", sizeSlider.getValue()));
-        sizeSliderTF.setPrefWidth(30);
-        sizeSliderTF.setAlignment(Pos.CENTER);
+        Label sizeSliderLabel = new Label();
+        sizeSliderLabel.setText(String.format("%.0f", sizeSlider.getValue()));
+        sizeSliderLabel.setPrefWidth(30);
         sizeSlider.valueProperty().addListener((observableValue, oldNumber, newNumber) -> {
             sizeSlider.setValue(newNumber.intValue());
-            sizeSliderTF.setText(String.format("%.0f", sizeSlider.getValue()));
+            sizeSliderLabel.setText(String.format("%.0f", sizeSlider.getValue()));
             gc.setLineWidth(sizeSlider.getValue());
         });
-        optionPane.getChildren().add(sizeSliderTF);
+        optionPane.getChildren().add(sizeSliderLabel);
 
         Separator optionPaneSeparator_1 = new Separator();
         optionPaneSeparator_1.setOrientation(Orientation.VERTICAL);
