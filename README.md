@@ -11,4 +11,3 @@ Go and check out the JavaFX-Library [here](https://openjfx.io/ "JavaFX"). Since 
 
 ## Future possible features
 - Line "Anti-Aliasing"
-- Save the image/canvas
