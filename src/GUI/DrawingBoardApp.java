@@ -2,6 +2,7 @@ package GUI;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
@@ -10,12 +11,19 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import javax.imageio.ImageIO;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class DrawingBoardApp extends Application {
 
@@ -93,6 +101,34 @@ public class DrawingBoardApp extends Application {
         fillButton.setOnAction(actionEvent -> gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight()));
         optionPane.getChildren().add(fillButton);
         layout.setTop(optionPane);
+
+        Separator optionPaneSeparator_3 = new Separator();
+        optionPaneSeparator_3.setOrientation(Orientation.VERTICAL);
+        optionPane.getChildren().add(optionPaneSeparator_3);
+
+        Button saveButton = new Button("Save");
+        saveButton.setOnAction(actionEvent -> {
+            FileChooser fileChooser = new FileChooser();
+
+            //Set extension filter
+            FileChooser.ExtensionFilter extFilter =
+                    new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
+            fileChooser.getExtensionFilters().add(extFilter);
+
+            //Show save file dialog
+            File file = fileChooser.showSaveDialog(primaryStage);
+
+            if (file != null) {
+                try {
+                    WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
+                    canvas.snapshot(null, writableImage);
+                    RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
+                    ImageIO.write(renderedImage, "png", file);
+                } catch (IOException ex) {
+                }
+            }
+        });
+        optionPane.getChildren().add(saveButton);
 
 
         /* CANVAS */
