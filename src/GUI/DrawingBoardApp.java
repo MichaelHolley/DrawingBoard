@@ -28,7 +28,7 @@ import java.io.IOException;
 public class DrawingBoardApp extends Application {
 
     private final int mouseOffset = 60;
-    private Point2D lastErasePoint;
+    private Point2D lastDrawPoint;
 
     private Stage window;
     private Canvas canvas;
@@ -109,15 +109,10 @@ public class DrawingBoardApp extends Application {
         Button saveButton = new Button("Save");
         saveButton.setOnAction(actionEvent -> {
             FileChooser fileChooser = new FileChooser();
-
-            //Set extension filter
             FileChooser.ExtensionFilter extFilter =
                     new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
             fileChooser.getExtensionFilters().add(extFilter);
-
-            //Show save file dialog
             File file = fileChooser.showSaveDialog(primaryStage);
-
             if (file != null) {
                 try {
                     WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
@@ -139,40 +134,34 @@ public class DrawingBoardApp extends Application {
         gc.setLineWidth(sizeSlider.getValue());
 
         canvas.setOnMousePressed(mouseEvent -> {
-            if (drawButton.isSelected() && !eraseButton.isSelected()) {
-                gc.beginPath();
-                gc.lineTo(mouseEvent.getSceneX(), mouseEvent.getSceneY() - mouseOffset);
-                gc.stroke();
-            } else if (!drawButton.isSelected() && eraseButton.isSelected()) {
-                lastErasePoint = new Point2D(
-                        mouseEvent.getSceneX(), mouseEvent.getSceneY() - mouseOffset);
-            }
+            lastDrawPoint = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY() - mouseOffset);
         });
 
         canvas.setOnMouseDragged(mouseEvent -> {
+            Point2D location = new Point2D(
+                    mouseEvent.getSceneX(), mouseEvent.getSceneY() - mouseOffset);
+
+            Point2D diff = location.subtract(lastDrawPoint);
+            double angle = Math.toDegrees(
+                    Math.atan2(diff.getY(), diff.getX()));
+            double width = gc.getLineWidth();
+
+            gc.save();
+            gc.setTransform(new Affine(new Rotate(
+                    angle, lastDrawPoint.getX(), lastDrawPoint.getY())));
             if (drawButton.isSelected() && !eraseButton.isSelected()) {
-                gc.lineTo(mouseEvent.getSceneX(), mouseEvent.getSceneY() - mouseOffset);
-                gc.stroke();
+                gc.fillOval(
+                        lastDrawPoint.getX() - width / 2,
+                        lastDrawPoint.getY() - width / 2,
+                        lastDrawPoint.distance(location) + width, width);
             } else if (!drawButton.isSelected() && eraseButton.isSelected()) {
-                Point2D location = new Point2D(
-                        mouseEvent.getSceneX(), mouseEvent.getSceneY() - mouseOffset);
-
-                Point2D diff = location.subtract(lastErasePoint);
-                double angle = Math.toDegrees(
-                        Math.atan2(diff.getY(), diff.getX()));
-                double width = gc.getLineWidth();
-
-                gc.save();
-                gc.setTransform(new Affine(new Rotate(
-                        angle, lastErasePoint.getX(), lastErasePoint.getY())));
                 gc.clearRect(
-                        lastErasePoint.getX() - width / 2,
-                        lastErasePoint.getY() - width / 2,
-                        lastErasePoint.distance(location) + width, width);
-                gc.restore();
-
-                lastErasePoint = location;
+                        lastDrawPoint.getX() - width / 2,
+                        lastDrawPoint.getY() - width / 2,
+                        lastDrawPoint.distance(location) + width, width);
             }
+            gc.restore();
+            lastDrawPoint = location;
         });
 
         layout.setCenter(canvas);
