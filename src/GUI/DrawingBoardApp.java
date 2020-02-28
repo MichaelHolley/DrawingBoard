@@ -125,7 +125,6 @@ public class DrawingBoardApp extends Application {
         });
         optionPane.getChildren().add(saveButton);
 
-
         /* CANVAS */
         canvas = new Canvas(800, 740);
         gc = canvas.getGraphicsContext2D();
@@ -163,9 +162,7 @@ public class DrawingBoardApp extends Application {
             gc.restore();
             lastDrawPoint = location;
         });
-
         layout.setCenter(canvas);
-
 
         Scene scene = new Scene(layout, 800, 800);
         scene.getStylesheets().add("GUI/OptionsStyling.css");
