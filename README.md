@@ -8,6 +8,3 @@ Go and check out the JavaFX-Library [here](https://openjfx.io/ "JavaFX"). Since 
 - Pencil-Width/Size
 - Draw and Erase
 - Buttons to Fill and Clear the whole canvas
-
-## Future possible features
-- Line "Anti-Aliasing"
