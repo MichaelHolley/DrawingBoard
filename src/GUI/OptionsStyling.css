@@ -3,6 +3,7 @@
 
 .button {
     -fx-pref-width: 80px;
+    -fx-background-radius: 20px;
 }
 
 .combo-box {

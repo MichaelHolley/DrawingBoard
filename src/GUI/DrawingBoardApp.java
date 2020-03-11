@@ -132,23 +132,21 @@ public class DrawingBoardApp extends Application {
         gc.setFill(colorSelection.getValue());
         gc.setLineWidth(sizeSlider.getValue());
 
-        canvas.setOnMousePressed(mouseEvent -> {
-            lastDrawPoint = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY() - mouseOffset);
-        });
+        canvas.setOnMousePressed(mouseEvent ->
+            lastDrawPoint = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY() - mouseOffset)
+        );
 
         canvas.setOnMouseDragged(mouseEvent -> {
             Point2D location = new Point2D(
                     mouseEvent.getSceneX(), mouseEvent.getSceneY() - mouseOffset);
-
-            Point2D diff = location.subtract(lastDrawPoint);
-            double angle = Math.toDegrees(
-                    Math.atan2(diff.getY(), diff.getX()));
             double width = gc.getLineWidth();
-
-            gc.save();
-            gc.setTransform(new Affine(new Rotate(
-                    angle, lastDrawPoint.getX(), lastDrawPoint.getY())));
             if (drawButton.isSelected() && !eraseButton.isSelected()) {
+                Point2D diff = location.subtract(lastDrawPoint);
+                double angle = Math.toDegrees(
+                        Math.atan2(diff.getY(), diff.getX()));
+                gc.save();
+                gc.setTransform(new Affine(new Rotate(
+                        angle, lastDrawPoint.getX(), lastDrawPoint.getY())));
                 gc.fillOval(
                         lastDrawPoint.getX() - width / 2,
                         lastDrawPoint.getY() - width / 2,
